@@ -1,0 +1,50 @@
+import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+# Define a stream, custom class, that reports data written to it, with a Qt signal
+class EmittingStream(QtCore.QObject):
+
+    textWritten = QtCore.pyqtSignal(str)
+
+    def write(self, text):
+        self.textWritten.emit(str(text))
+
+class Ui_TableManagerWindow(object):
+    def setupUi(self, TableManagerWindow):
+        #define all of my widgets, layout, etc here
+        .
+        .
+        .
+        # Install a custom output stream by connecting sys.stdout to instance of EmmittingStream.
+        sys.stdout = EmittingStream(textWritten=self.output_terminal_written)
+
+        # Create my signal/connections for custom method
+        self.source_dir_button.clicked.connect(self.sourceDirButtonClicked)
+
+        self.retranslateUi(TableManagerWindow)
+        QtCore.QMetaObject.connectSlotsByName(TableManagerWindow)
+
+
+    def retranslateUi(self, TableManagerWindow):
+        .
+        .
+        .
+
+    #custom method that prints to output terminal.  The point is to have this emmitted out to my QTextEdit widget.
+    def sourceDirButtonClicked(self):
+        for i in range(10):
+            print("The Source DIR button has been clicked " + str(i) + " times")
+
+    #custom method to write anything printed out to console/terminal to my QTextEdit widget via append function.
+    def output_terminal_written(self, text):
+        self.output_terminal_textEdit.append(text)
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    TableManagerWindow = QtWidgets.QMainWindow()
+    ui = Ui_TableManagerWindow()
+    ui.setupUi(TableManagerWindow)
+    TableManagerWindow.show()
+    sys.exit(app.exec_())
+Sh
